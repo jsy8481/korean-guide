@@ -17,7 +17,9 @@ export default async function GuideLayout({
 
     return (
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 px-4 py-8">
-            <GuideSidebar guidesByCategory={guidesByCategory} />
+            <aside className="md:sticky md:top-20 md:h-[calc(100vh-6rem)] md:overflow-y-auto w-full md:w-64 flex-shrink-0">
+                <GuideSidebar guidesByCategory={guidesByCategory} />
+            </aside>
             <main className="flex-1 min-w-0">
                 {children}
             </main>

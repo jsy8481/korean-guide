@@ -67,10 +67,10 @@ export default function GuideSidebar({ guidesByCategory }: GuideSidebarProps) {
                     transform transition-transform duration-300 ease-in-out
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
                     border-r md:border-r-0
-                    overflow-y-auto
+                    overflow-y-auto md:overflow-y-visible
                 `}
             >
-                <div className="sticky top-0 p-6 md:p-0 md:pt-0">
+                <div className="p-6 md:p-0 md:pt-0">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-bold text-lg">목차</h3>
                         <button
