@@ -7,7 +7,7 @@ import Navigation from "@/components/Navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://jsy8481.github.io/korean-guide'),
+  metadataBase: new URL('https://jsy8481.github.io'),
   title: {
     template: '%s | 한국어 기술 가이드',
     default: '한국어 기술 가이드',

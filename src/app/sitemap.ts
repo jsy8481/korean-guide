@@ -6,7 +6,7 @@ export const dynamic = 'force-static';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const guides = await getAllGuides();
-    const baseUrl = 'https://jsy8481.github.io/korean-guide';
+    const baseUrl = 'https://jsy8481.github.io';
 
     const guideUrls = guides.map((guide) => ({
         url: `${baseUrl}/guides/${guide.category}/${guide.slug}`,
