@@ -73,7 +73,7 @@ export default async function GuidePage({ params }: { params: Promise<{ category
             name: '한국어 기술 가이드',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://jsy8481.github.io/logo.png',
+                url: 'https://jsy8481.github.io/logo.svg',
             },
         },
     };
