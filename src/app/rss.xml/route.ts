@@ -13,7 +13,7 @@ export async function GET() {
         id: site_url,
         link: site_url,
         language: "ko",
-        image: `${site_url}/logo.png`,
+        image: `${site_url}/logo.svg`,
         favicon: `${site_url}/favicon.ico`,
         copyright: `All rights reserved ${new Date().getFullYear()}, jsy8481`,
         generator: "Feed for Node.js",
