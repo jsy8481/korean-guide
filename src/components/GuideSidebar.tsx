@@ -21,8 +21,11 @@ export default function GuideSidebar({ guidesByCategory }: GuideSidebarProps) {
     const sidebarRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
-        if (activeRef.current) {
-            activeRef.current.scrollIntoView({ block: 'center', behavior: 'instant' });
+        if (activeRef.current && sidebarRef.current) {
+            const sidebar = sidebarRef.current;
+            const activeEl = activeRef.current;
+            const offsetTop = activeEl.offsetTop - sidebar.offsetTop;
+            sidebar.scrollTop = offsetTop - sidebar.clientHeight / 2 + activeEl.clientHeight / 2;
         }
     }, [pathname]);
 
@@ -60,6 +63,7 @@ export default function GuideSidebar({ guidesByCategory }: GuideSidebarProps) {
 
             {/* Sidebar */}
             <aside
+                ref={sidebarRef}
                 className={`
                     fixed md:static inset-y-0 left-0 z-40
                     w-72 md:w-64 flex-shrink-0
@@ -97,7 +101,10 @@ export default function GuideSidebar({ guidesByCategory }: GuideSidebarProps) {
                                             <li key={guide.slug} ref={isActive ? activeRef : null}>
                                                 <Link
                                                     href={href}
-                                                    onClick={() => setIsOpen(false)}
+                                                    onClick={() => {
+                                                        setIsOpen(false);
+                                                        window.scrollTo(0, 0);
+                                                    }}
                                                     className={`block py-1.5 px-2 rounded text-sm transition-colors ${isActive
                                                         ? 'bg-gray-100 dark:bg-gray-800 font-medium text-gray-900 dark:text-gray-100'
                                                         : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
