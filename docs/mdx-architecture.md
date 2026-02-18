@@ -268,4 +268,64 @@ DB의 `content` 컬럼(TEXT 타입)에 위 문자열이 그대로 들어갑니�
 - **[화면]**: 에디터가 `<LineChart ... />`라는 텍스트를 발견하면, 즉시 그 자리에 **실제 그래프 컴포넌트**를 끼워 넣어서 보여줍니다. (사용자는 텍스트를 못 봅니다)
 - **[저장]**: 사용자가 그래프 데이터를 수정하고 '저장'을 누르면, 에디터는 다시 그 그래프를 `<LineChart data={...} />` 라는 **문자열로 변환**해서 서버에 보냅니다.
 
+- **[저장]**: 사용자가 그래프 데이터를 수정하고 '저장'을 누르면, 에디터는 다시 그 그래프를 `<LineChart data={...} />` 라는 **문자열로 변환**해서 서버에 보냅니다.
+
 즉, **"사용자는 화려한 UI를 보지만, DB는 깔끔한 텍스트만 갖는다"**는 것이 가장 큰 장점입니다.
+
+### 💡 Q. 뷰어에서는 어떻게 `<LineChart />`를 실제 차트로 보여주나요?
+**"컴포넌트 매핑(Component Mapping)" 설정이 필요합니다.**
+
+MDX 엔진은 기본적으로 `<LineChart>`가 뭔지 모릅니다. 그래서 "이 이름이 나오면 저 컴포넌트를 그려라"라고 알려주는 과정이 필요합니다.
+
+**구현 코드 예시 (`src/app/guides/[slug]/page.tsx`):**
+```tsx
+import { compileMDX } from 'next-mdx-remote/rsc';
+// 1. 실제 차트 컴포넌트 불러오기
+import LineChart from '@/components/LineChart';
+
+export default async function Page({ params }) {
+  // ... 파일 읽기 로직 ...
+
+  const { content } = await compileMDX({
+    source: mdxSource,
+    // 2. MDX 엔진에게 "LineChart" 단어와 실제 컴포넌트 연결해주기
+    components: {
+      LineChart: LineChart,
+      // 여기에 H1, Image 등 기본 태그도 덮어쓸 수 있음
+    },
+  });
+
+  return <article>{content}</article>;
+}
+```
+이렇게 **`components` 속성**에 등록만 해주면, MDX 파일 안에 있는 `<LineChart ... />` 텍스트가 마법처럼 실제 React 컴포넌트로 변환되어 실행됩니다.
+
+### 💡 Q. MDXEditor에서 "속성 편집 UI(Property Editor)"는 어떻게 구현하나요?
+**`FloatingToolbar`와 `PropertyEditor` 컴포넌트를 조합하여 만듭니다.**
+
+`MDXEditor`는 **"어떤 컴포넌트가 사용되었는지"**만 알고 있습니다. 그 컴포넌트의 속성(Props)을 시각적으로 편집하는 UI는 직접 제공하지 않기 때문에, 개발자가 만들어야 합니다.
+
+**구현 단계:**
+1.  **컴포넌트 정의**: `LineChart` 같은 컴포넌트를 만들 때, `title`, `data` 같은 속성을 명시합니다.
+2.  **Descriptor 등록**: 에디터에게 "이 컴포넌트는 이런 속성을 가진다"고 알려줍니다.
+3.  **FloatingToolbar 설정**: 사용자가 그래프를 클릭했을 때 떠오를 툴바에 **"속성 편집(Edit Properties)"** 버튼을 추가합니다.
+4.  **PropertyEditor 렌더링**: 해당 버튼을 누르면, 등록된 Descriptor를 바탕으로 **자동으로 폼(Form)**을 그려주는 `PropertyEditor` 컴포넌트를 띄웁니다.
+
+**핵심 코드 예시:**
+```tsx
+// 1. 컴포넌트와 Descriptor 정의
+const lineChartDescriptor: ComponentDescriptor = {
+  name: 'LineChart',
+  props: [
+    { name: 'title', type: 'string' },
+    { name: 'data', type: 'array' },
+  ],
+};
+
+// 2. 툴바에 버튼 추가
+<FloatingToolbar>
+  <EditButton />
+  <PropertyEditor descriptor={lineChartDescriptor} />
+</FloatingToolbar>
+```
+이렇게 하면 사용자는 코드를 몰라도, 클릭만으로 그래프 속성을 수정할 수 있게 됩니다.
