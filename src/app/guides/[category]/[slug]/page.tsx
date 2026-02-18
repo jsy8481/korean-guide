@@ -38,6 +38,9 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
             title,
             description,
         },
+        alternates: {
+            canonical: `https://jsy8481.github.io${url}`,
+        },
     };
 }
 
@@ -49,8 +52,38 @@ export default async function GuidePage({ params }: { params: Promise<{ category
         notFound();
     }
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        headline: guide.meta.title,
+        description: guide.meta.description,
+        author: {
+            '@type': 'Person',
+            name: 'jsy8481',
+            url: 'https://github.com/jsy8481',
+        },
+        datePublished: new Date(guide.meta.date).toISOString(),
+        dateModified: new Date(guide.meta.date).toISOString(),
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `https://jsy8481.github.io/guides/${category}/${slug}`,
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: '한국어 기술 가이드',
+            logo: {
+                '@type': 'ImageObject',
+                url: 'https://jsy8481.github.io/logo.png',
+            },
+        },
+    };
+
     return (
         <article className="prose dark:prose-invert max-w-none">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <h1 className="mb-4 text-3xl font-extrabold tracking-tight lg:text-4xl leading-tight lg:leading-snug">
                 {guide.meta.title}
             </h1>
